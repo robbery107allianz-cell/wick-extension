@@ -65,7 +65,9 @@ export async function commitSnapshot({ html, title, capturedAt, url, note }) {
   const host = new URL(url).hostname;
   const stamp = capturedAt.replace(/[:.]/g, '-');
   const slug = slugify(title || host);
-  const base = `snapshots/${host}/${stamp}-${slug}`;
+  // Lives under docs/ because GitHub Pages (source = main, path = /docs) only
+  // serves that folder - anywhere else in the repo is invisible to the public site.
+  const base = `docs/snapshots/${host}/${stamp}-${slug}`;
 
   await putFile(config, `${base}.html`, toBase64(html), `index: ${url}`);
 
