@@ -35,15 +35,23 @@ async function getConfig() {
 }
 
 async function putFile({ pat, owner, repo }, path, contentBase64, message) {
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-    method: 'PUT',
-    headers: {
-      Authorization: `Bearer ${pat}`,
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-    body: JSON.stringify({ message, content: contentBase64 }),
-  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000); // a hung request must surface as an error, not an infinite spinner
+  let res;
+  try {
+    res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${pat}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      body: JSON.stringify({ message, content: contentBase64 }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`GitHub ${res.status}: ${body}`);

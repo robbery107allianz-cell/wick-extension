@@ -7,8 +7,10 @@ async function captureInPage() {
   const MAX_IMAGE_BYTES = 2 * 1024 * 1024; // skip inlining images over 2MB, keep snapshots light
 
   async function toDataURL(url) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000); // one slow/CDN-blocked image must not hang the whole capture
     try {
-      const res = await fetch(url, { credentials: 'omit' });
+      const res = await fetch(url, { credentials: 'omit', signal: controller.signal });
       if (!res.ok) return null;
       const blob = await res.blob();
       if (blob.size > MAX_IMAGE_BYTES) return null;
@@ -20,6 +22,8 @@ async function captureInPage() {
       });
     } catch {
       return null;
+    } finally {
+      clearTimeout(timer);
     }
   }
 
