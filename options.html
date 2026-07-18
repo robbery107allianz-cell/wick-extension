@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font: 13px -apple-system, sans-serif; max-width: 420px; padding: 16px; }
+  label { display: block; margin-top: 12px; font-weight: 600; }
+  input { width: 100%; box-sizing: border-box; padding: 6px; margin-top: 4px; font: inherit; }
+  button { margin-top: 16px; padding: 8px 16px; cursor: pointer; }
+  #status { margin-top: 8px; font-size: 12px; color: #666; }
+  p.hint { font-size: 12px; color: #888; margin: 4px 0 0; }
+</style>
+</head>
+<body>
+  <h3>Wick 设置</h3>
+  <label for="owner">GitHub 仓库 owner</label>
+  <input id="owner" placeholder="your-github-username">
+  <label for="repo">仓库名</label>
+  <input id="repo" placeholder="wick">
+  <label for="pat">Fine-grained PAT</label>
+  <input id="pat" type="password" placeholder="github_pat_...">
+  <p class="hint">GitHub → Settings → Developer settings → Fine-grained tokens 创建，Repository access 只勾选这一个仓库，Permissions 只给 Contents: Read and write。</p>
+  <button id="save">保存</button>
+  <div id="status"></div>
+  <script src="options.js"></script>
+</body>
+</html>
